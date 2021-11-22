@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Taxi-Management-System</title>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-database.js"></script>
+
+
+
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+    https://firebase.google.com/docs/web/setup#config-web-app -->
+  <script>
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBh1QQ6tXK0nN_8PWij2sU-TMDEAXEdliI",
+      authDomain: "taxi-management-system-55dd3.firebaseapp.com",
+      databaseURL: "https://taxi-management-system.firebaseio.com",
+      projectId: "taxi-management-system-55dd3",
+      storageBucket: "taxi-management-system-55dd3.appspot.com",
+      messagingSenderId: "21436343962",
+      appId: "1:21436343962:web:6b19df0a78f9ebca376123",
+      measurementId: "G-65GRV92XRY"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+  </script>
+  <script src="app.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.js"> </script>
+  <script src="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"></script>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap4.min.css"></script>
+
+  <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWmvgqWSRNTlt2OrIxzr2G1lz7mjJw2X4&callback=initMap"
+    async defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+  <script src="particles.js"></script>
+  <script src="particles-app.js"></script>
+  <script src="featherjs.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <style>
+    table.dataTable {
+      border-collapse: collapse !important;
+    }
+
+    input[type=checkbox].custom-check-search {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+
+      height: 1rem;
+      width: 1rem;
+
+      border: .1rem solid #C8C9C7;
+      border-radius: 50%;
+    }
+
+    .completed {
+      border-color: #78BE20;
+      background-color: #78BE20;
+      box-shadow: 0px 0px .2rem .06rem #78BE20;
+    }
+
+    input[type=checkbox].custom-check-search:checked {
+      background-color: #C8C9C7;
+    }
+
+    input[type=checkbox].custom-check-search:hover {
+      box-shadow: 0px 0px .2rem .06rem #C8C9C7;
+    }
+
+    input[type=checkbox].custom-check-search.complete {
+      border-color: #78BE20;
+    }
+
+    input[type=checkbox].custom-check-search:checked.complete {
+      background-color: #78BE20;
+    }
+
+    input[type=checkbox].custom-check-search:hover.complete {
+      box-shadow: 0px 0px .2rem .06rem #78BE20;
+    }
+
+    .complete {
+      border-color: #78BE20;
+      background-color: #78BE20;
+      box-shadow: 0px 0px .2rem .06rem #78BE20;
+    }
+
+    .green-dot {
+      height: 1rem;
+      width: 1rem;
+      background-color: #78BE20;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0px 0px .2rem .06rem #78BE20;
+    }
+
+    .grey-dot {
+      height: 1rem;
+      width: 1rem;
+      background-color: #C8C9C7;
+      box-shadow: 0px 0px .2rem .06rem #C8C9C7;
+      border-radius: 50%;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body id="particles-js" style="height: 100%; background-color: black">
+
+  <div class="container" id="login_div" style="display: none;">
+    <div class="row">
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4" style="margin-top: 10%;">
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" class="form-control" id="email_field" placeholder="Enter email" name="email">
+        </div>
+        <div class="form-group">
+          <label for="pwd">Password:</label>
+          <input type="password" class="form-control" id="password_field" placeholder="Enter password" name="pswd">
+        </div>
+        <div class="text-center">
+          <button class="btn btn-primary" onclick="login()">Login</button>
+        </div>
+      </div>
+      <div class="col-sm-4"></div>
+    </div>
+  </div>
+
+  <div id="content_div" class="container" style="display: none">
+    <br><br>
+    <div class="card mb-4">
+      <div class="card-header text-white bg-dark">
+        Control Center
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-9">
+
+          </div>
+          <div class="col-lg-3 text-right">
+            <div class="row">
+              <p id="user_para">Welcome</p>&nbsp&nbsp
+              <button class="btn btn-outline-danger" data-toggle="tooltip" title="Log-out" onclick="logout()"> <i
+                  data-feather="log-out"></i> </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="container mt-3">
+          <br>
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#dashboard_tab" onclick="initMap();">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#buses_tab">Taxis</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#drivers_tab">Drivers</a>
+            </li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div id="dashboard_tab" class="container tab-pane active"><br>
+              <h3>Home</h3>
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-12 text-center">
+                    <div id="floating_panel" class="card text-info"></div>
+                    <div id="map" style="height: 400px; width: 1000px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="buses_tab" class="container tab-pane fade"><br>
+              <h3>Taxis</h3>
+
+              <div class="container">
+                <div class="row mb-4">
+                  <div class="col-md-8 mx-auto">
+                    <div class="input-group input-custom-search">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="feather-search"></i></span>
+                      </div>
+
+                      <input type="text" class="form-control mySearch" placeholder="Search Taxis" id="mySearchTaxi"
+                        autocomplete="off">
+
+                      <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-dark" onclick="$('#clpFilter').collapse('toggle');"
+                          data-toggle="tooltip" title="Filters">
+                          <i data-feather="filter"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-4 px-2 collapse" id="clpFilter">
+                  <div class="col-12">
+                    <hr>
+                  </div>
+
+                  <div class="col-auto px-5">
+                    <label class="control-label d-block">Status</label>
+                    <div class="form-group mb-0">
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input position-static custom-check-search"
+                          id="allClosed" value="closed" data-toggle="tooltip" title="Filter Inactive" checked
+                          autocomplete="off">
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input position-static custom-check-search complete"
+                          id="allCompleted" data-toggle="tooltip" title="Filter Active" value="completed" checked
+                          autocomplete="off">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row ml-0">
+
+                  <div class="col-md-12 ml-4">
+                    <span data-toggle="tooltip" title="Add a new taxi">
+                      <button data-toggle="modal" type="button" data-target="#addTaxiModal"
+                        class="btn btn-outline-success"> <i data-feather="plus"></i>
+
+                      </button>
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                <table id="tblTaxis" class="table table-striped table-hover w-100">
+                  <thead>
+                    <tr>
+                      <th>Status</th>
+                      <th>Update</th>
+                      <th>Taxi Code</th>
+                      <th>Number Plate</th>
+                      <th>Number</th>
+                      <th>Route</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+
+            <div id="drivers_tab" class="container tab-pane fade"><br>
+              <h3>Drivers</h3>
+
+              <div class="container">
+
+                <div class="row mb-4">
+                  <div class="col-md-8 mx-auto">
+                    <div class="input-group input-custom-search">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="feather-search"></i></span>
+                      </div>
+
+                      <input type="text" class="form-control" placeholder="Search Drivers" id="mySearch"
+                        autocomplete="off">
+
+                      <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-dark"
+                          onclick="$('#driverFilters').collapse('toggle');" data-toggle="tooltip" title="Filters">
+                          Filter
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-4 px-2 collapse" id="driverFilters">
+                  <div class="col-12">
+                    <hr>
+                  </div>
+
+                  <div class="col-auto px-5">
+                    <label class="control-label d-block">Status</label>
+                    <div class="form-group mb-0">
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input position-static custom-check-search"
+                          id="filterClosed" value="closed" data-toggle="tooltip" title="Filter Offline" checked
+                          autocomplete="off">
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input position-static custom-check-search complete"
+                          id="filterCompleted" data-toggle="tooltip" title="Filter Online" value="completed" checked
+                          autocomplete="off">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row ml-0">
+
+
+                  <span data-toggle="tooltip" title="Add a new driver">
+                    <button data-toggle="modal" type="button" data-target="#addDriverModal"
+                      class="btn btn-outline-success"> <i data-feather="plus"></i>
+
+                    </button>
+                  </span>
+                </div>
+                <table id="tblDrivers" class="table table-striped table-hover table  w-100">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Id</th>
+                      <th>Name</th>
+                      <th>Image</th>
+                      <th>Type</th>
+                    </tr>
+                  </thead>
+                </table>
+
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+
+        <!-- The Modal -->
+        <div class="modal fade" id="addTaxiModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header bg-dark text-white">
+                <h4 class="modal-title">Add Taxi</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+              </div>
+
+              <!-- Modal body -->
+              <div class="modal-body">
+                <div class="container">
+                  <form>
+                    <div class="form-group">
+                      <label for="inputNumPlate">Number Plate</label>
+                      <input type="text" class="form-control" id="inputNumPlate">
+                    </div>
+                    <div class="form-group">
+                      <label for="inputBusNum">Taxi Number</label>
+                      <input type="text" class="form-control" id="inputBusNum">
+                    </div>
+                    <div class="form-group">
+                      <label for="inputBusRoute">Taxi Route</label>
+                      <input type="text" id="inputBusRoute" class="form-control">
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Modal footer -->
+              <div class="modal-footer">
+                <button type="button" onclick="addTaxi();" data-dismiss="modal" data-toggle="tooltip" title="Submit"
+                  class="btn btn-outline-success"><i data-feather="check"></i></button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!--Modal for editing-->
+        <div class="modal fade" id="updateTaxiDetails">
+          <div class="modal-dialog">
+            <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header bg-dark">
+                <h4 class="modal-title text-white">Update Taxi</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+              </div>
+
+              <!-- Modal body -->
+              <div class="modal-body">
+                <div class="container">
+                  <div class="row mb-5">
+                    <div class="col-md-12">
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="taxiSwitch">
+                        <label class="custom-control-label" for="taxiSwitch">Active/De-Activate</label>
+                      </div>
+                    </div>
+                  </div>
+                  <form>
+                    <div class="form-group">
+                      <label for="inputNumPlateToUpdate">Number Plate</label>
+                      <input type="text" class="form-control" id="inputNumPlateToUpdate">
+                    </div>
+                    <div class="form-group">
+                      <label for="inputBusNumToUpdate">Taxi Number</label>
+                      <input type="text" class="form-control" id="inputBusNumToUpdate">
+                    </div>
+                    <div class="form-group">
+                      <label for="inputBusRouteToUpdate">Taxi Route</label>
+                      <input type="text" id="inputBusRouteToUpdate" class="form-control">
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Modal footer -->
+              <div class="modal-footer">
+                <button type="button" onclick="SaveTaxisChanges();" data-dismiss="modal" class="btn btn-dark">Update
+                  Taxi
+                  Details</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <!-- Add Driver -->
+        <div class="modal fade" id="addDriverModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header bg-dark text-white">
+                <h4 class="modal-title">Add Driver</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+              </div>
+
+
+              <!-- Modal body -->
+              <div class="modal-body">
+                <div class="container">
+                  <form>
+                    <div class="form-group">
+                      <label for="idNumber">Id Number</label>
+                      <input type="text" class="form-control" id="idNumber">
+                    </div>
+                    <div class="form-group">
+                      <label for="fullName">Name</label>
+                      <input type="text" class="form-control" id="fullName">
+                    </div>
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-outline-secondary" data-tooltip="tooltip" title="Add Files"
+                        onclick="$(this).find('input')[0].click()" id="multiFile"><i data-feather="upload"></i>
+                        <input type="file" class="d-none" multiple>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Modal footer -->
+              <div class="modal-footer">
+
+
+                <button type="button" onclick="addDriver();" data-dismiss="modal" class="btn btn-outline-success">
+                  <i data-feather="check"></i>
+
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+
+      </div>
+    </div>
+
+  </div>
+  <script src="particles.js"></script>
+  <script src="particles-app.js"></script>
+  <script src="featherjs.js"></script>
+
+  <script type="text/javascript">
+    var taxisTable;
+    var driversTable;
+    $(document).ready(function () {
+      loadDrivers();
+      loadTaxis();
+      $('[data-toggle="tooltip"]').tooltip();
+      $('[data-tooltip="tooltip"]').tooltip();
+      feather.replace();
+      $.notify("Application launched successfully", "success");
+    });
+
+    //search function
+    $.fn.dataTable.ext.search.push(
+      function (settings, data, dataIndex) {
+        debugger;
+        let foundStatus = false;
+        if ($('#allCompleted').is(":checked") && data[0] == "Active") {
+          foundStatus = true;
+        } else if ($('#allClosed').is(":checked") && (data[0] == "Inactive" || data[0] == "")) {
+          foundStatus = true;
+        } else {
+          foundStatus = true;
+        }
+
+        if ($('#filterCompleted').is(":checked") && data[0] == "Active") {
+          foundStatus = true;
+        } else if ($('#filterClosed').is(":checked") && (data[0] == "Inactive" || data[0] == "")) {
+          foundStatus = true;
+        } else {
+          foundStatus = true;
+        }
+
+        const isNoChecks = (!$('#allCompleted').is(":checked") && !$('#allClosed').is(":checked")) ?
+          true : false;
+
+        const isNoChecks1 = (!$('#filterCompleted').is(":checked") && !$('#filterClosed').is(":checked")) ?
+          true : false;
+
+        let searchColumns = [1, 2, 3, 4]
+        if (foundStatus) {
+          for (i = 0; i < searchColumns.length; i++) {
+            let dataString = data[searchColumns[i]].toString().toLowerCase();
+            let searchValue = $('.mySearch').val().toLowerCase();
+            let searchValue1 = $('#mySearch').val().toLowerCase();
+            if (dataString.includes(searchValue)) {
+              return true;
+            }
+            if (dataString.includes(searchValue1)) {
+              return true;
+            }
+          }
+        } else if (isNoChecks) {
+          return true;
+        } else {
+          return false;
+        }
+        //THEEEEE
+        if (foundStatus) {
+          for (i = 0; i < searchColumns.length; i++) {
+            let dataString = data[searchColumns[i]].toString().toLowerCase();
+            let searchValue = $('.mySearch').val().toLowerCase();
+            let searchValue1 = $('#mySearch').val().toLowerCase();
+            if (dataString.includes(searchValue)) {
+              return true;
+            }
+            if (dataString.includes(searchValue1)) {
+              return true;
+            }
+          }
+        } else if (isNoChecks1) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    );
+    taxisTable = $('#tblTaxis').DataTable({
+      select: {
+        style: 'multi',
+        selector: 'td:first-child'
+      },
+      columnDefs: [{
+        data: "status", defaultContent: "", width: "1%",
+        orderable: false, targets: 0, className: "text-center",
+        render: function (data, type, row) {
+
+          if (type == 'display') {
+            return generateTaxiStatus(data);
+          }
+
+          return data;
+        }
+      }, {
+        data: "id",
+        orderable: false,
+        targets: 1, render: function (data, type, row, meta) {
+          return `  
+                    <span data-toggle="tooltip" title="Update taxi details">
+            <button type="button"
+                    class="btn btn-outline-warning  align-self-center"  data-toggle="modal" data-target="#updateTaxiDetails"
+                      onclick="editTaxi(this)" id ='${data}'>
+                    <i data-feather="edit"></i>
+                    
+                    </button>
+                    </span>
+                    `
+        },
+        width: "1%"
+      },
+
+      {
+        data: "numberPlate", defaultContent: "", className: 'text-center',
+        targets: 2
+      },
+
+      {
+        data: "taxiCode", defaultContent: "",
+        targets: 3, className: 'text-center'
+      },
+      {
+        data: "taxiNumber", defaultContent: "",
+        targets: 4, className: 'text-center'
+      },
+      {
+        data: "taxiRoute", defaultContent: "",
+        targets: 5, className: 'text-center'
+      }
+      ],
+      select: {
+        style: 'single',
+      },
+      order: [[1, 'desc']],
+      lengthMenu: [5, 10, 25, 50],
+      pageLength: 25,
+      dom: '<"row align-items-center" <"col-auto ml-auto"l> > <"row" <"col-12 table-responsive"t> > <"row" <"col"i><"col-auto ml-auto"p> >',
+    });
+
+
+    driversTable = $('#tblDrivers').DataTable({
+      select: {
+        style: 'multi',
+        selector: 'td:first-child'
+      },
+      columnDefs: [{
+        data: "status", defaultContent: "",
+        orderable: false, targets: 0, className: "text-center",
+        render: function (data, type, row) {
+
+          if (type == 'display') {
+            return generateDriverStatus(data);
+          }
+
+          return data;
+        }
+      },
+
+      {
+        data: "id", defaultContent: "", className: 'text-center',
+        targets: 1
+      },
+
+      {
+        data: "fullName", defaultContent: "",
+        targets: 2, className: 'text-center'
+      },
+      {
+        data: "imageUrl", defaultContent: "",
+        targets: 3, className: 'text-center'
+      },
+      {
+        data: "userType", defaultContent: "",
+        targets: 4, className: 'text-center'
+      }
+      ],
+      select: {
+        style: 'single',
+      },
+      order: [[1, 'desc']],
+      lengthMenu: [5, 10, 25, 50],
+      pageLength: 25,
+      dom: '<"row align-items-center" <"col-auto ml-auto"l> > <"row" <"col-12 table-responsive"t> > <"row" <"col"i><"col-auto ml-auto"p> >',
+    });
+    taxisTable.on('draw', function () {
+      feather.replace();
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+    function loadDrivers() {
+      const users = firebase.firestore().collection("Users");
+      users
+        .get()
+        .then((snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          console.log("All data in 'books' collection", data);
+          if (data.length > 0) {
+            $('#tblDrivers').dataTable().fnAddData(data);
+            $('[data-toggle="tooltip"]').tooltip();
+          }
+          // [ { id: 'glMeZvPpTN1Ah31sKcnj', title: 'The Great Gatsby' } ]
+        });
+      $('[data-tooltip="tooltip"]').tooltip();
+    }
+    function loadTaxis() {
+      const taxis = firebase.firestore().collection("Taxis");
+      taxis
+        .get()
+        .then((snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          console.log("All data in 'books' collection", data);
+          if (data.length > 0) {
+            taxisTable.clear().draw();
+            $('#tblTaxis').dataTable().fnAddData(data);
+            //$('[data-toggle="tooltip"]').tooltip();
+          }
+          // [ { id: 'glMeZvPpTN1Ah31sKcnj', title: 'The Great Gatsby' } ]
+        });
+      $('[data-tooltip="tooltip"]').tooltip();
+      $('[data-tooltip="tooltip"]').tooltip();
+    }
+    function generateTaxiStatus(status) {
+      debugger;
+      switch (status) {
+        case "Active":
+          return '<span class="green-dot"></span>';
+          break;
+
+        default:
+          return '<span class="grey-dot"></span>';
+          break;
+      }
+
+      return null;
+    }
+    function generateDriverStatus(status) {
+      debugger;
+      switch (status) {
+        case "Online":
+          return '<span class="green-dot"></span>';
+          break;
+
+        default:
+          return '<span class="grey-dot"></span>';
+          break;
+      }
+
+      return null;
+    }
+    $('#clpFilter input[type="checkbox"]').change(function () {
+      taxisTable.draw();
+
+    });
+
+    //search datatable all
+    $('.mySearch').keyup(function () {
+      taxisTable.search(this.value).draw();
+    });
+    $('#driverFilters input[type="checkbox"]').change(function () {
+      driversTable.draw();
+    });
+
+    //search datatable all
+    $('#mySearch').keyup(function () {
+      driversTable.search(this.value).draw();
+    });
+    var idToUpdate;
+    function editTaxi(e) {
+
+      var num_plate = document.getElementById("inputNumPlate").value;
+      var bus_num = document.getElementById("inputBusNum").value;
+      var bus_route = document.getElementById("inputBusRoute").value;
+      debugger;
+      $("#inputNumPlateToUpdate").val($($($(e).parents('tr')).children()[3]).html());
+      $("#inputBusNumToUpdate").val($($($(e).parents('tr')).children()[4]).html());
+      $("#inputBusRouteToUpdate").val($($($(e).parents('tr')).children()[5]).html());
+      idToUpdate = $(e).attr("id");
+      if ($($($(e).parents('tr')).children()[0]).html() == "Active") {
+        $("#taxiSwitch").prop("checked", true)
+      } else {
+        $("#taxiSwitch").prop("checked", false)
+      }
+    }
+    function SaveTaxisChanges() {
+      const db = firebase.firestore();
+      debugger;
+      db.collection("Taxis").doc(idToUpdate).update({
+        "numberPlate": $("#inputNumPlateToUpdate").val(),
+        "taxiNumber": $("#inputBusNumToUpdate").val(),
+        "taxiRoute": $("#inputBusRouteToUpdate").val(),
+        "status": $("#taxiSwitch").is(":checked") ? "Active" : "Inactive"
+      }).then(function () {
+        $.notify("Taxi successfully added !", "success");
+      }, function () {
+        $.notify("Something went wrong !", "danger");
+      });
+
+      $("#inputNumPlateToUpdate").val("");
+      $("#inputBusNumToUpdate").val("");
+      $("#inputBusRouteToUpdate").val("");
+      idToUpdate = "";
+      loadTaxis();
+    }
+    feather.replace();
+  </script>
+
+</body>
+
+</html>
