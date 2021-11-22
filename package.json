@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "feather-icons": "^4.28.0",
-    "firebase": "^9.4.1",
-    "particles.js": "^2.0.0"
-  }
-}
